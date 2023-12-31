@@ -1,0 +1,42 @@
+<script type="text/javascript">
+    RED.nodes.registerType('lovebox-get-messages', {
+        category: 'lovebox',
+        defaults: {
+            name: {
+                value: 'Get messages',
+                required: false
+            },
+            LoveBoxAccountNodeId: {
+                value: '',
+                type: 'lovebox-account',
+                required: true
+            },
+        },
+        icon:'lovebox.svg',
+        color: '#8A64FF',
+        paletteLabel: 'Get messages',
+        label: function () {
+            return this.name || 'Get messages';
+        },
+        labelStyle: function () {
+            return this.name ? 'node_label_italic' : '';
+        }
+    });
+</script>
+
+<script data-template-name="lovebox-get-messages" type="text/html">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name" />
+    </div>
+    <div class="form-row">
+        <label for="node-input-LoveBoxAccountNodeId"><i class="fa fa-globe"></i> Lovebox Account</label>
+        <select id="node-input-LoveBoxAccountNodeId">
+            <option value="">Choose...</option>
+        </select>
+    </div>
+</script>
+
+<script data-help-name="lovebox-get-messages" type="text/markdown">
+    TODO write documentation
+</script>

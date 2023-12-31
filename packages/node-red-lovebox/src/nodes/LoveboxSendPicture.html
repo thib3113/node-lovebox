@@ -1,0 +1,70 @@
+<script type="text/javascript">
+    RED.nodes.registerType('lovebox-send-picture', {
+        category: 'lovebox',
+        defaults: {
+            name: {
+                value: 'Send picture',
+                required: false
+            },
+            LoveBoxAccountNodeId: {
+                value: '',
+                type: 'lovebox-account',
+                required: true
+            }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: 'lovebox.svg',
+        color: '#8A64FF',
+        paletteLabel: 'Send picture',
+        label: function () {
+            return this.name || 'Send picture';
+        },
+        labelStyle: function () {
+            return this.name ? 'node_label_italic' : '';
+        }
+    });
+</script>
+
+<script data-template-name="lovebox-send-picture" type="text/html">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name" />
+    </div>
+    <div class="form-row">
+        <label for="node-input-LoveBoxAccountNodeId"><i class="fa fa-globe"></i> Lovebox Account</label>
+        <select id="node-input-LoveBoxAccountNodeId">
+            <option value="">Choose...</option>
+        </select>
+    </div>
+</script>
+
+<script data-help-name="lovebox-send-picture" type="text/markdown">
+Allow to send a picture to the lovebox
+
+### Inputs
+
+From file-in node
+: payload (Buffer) : send by file-in
+: filename (object) : the filename, set by file-in
+: mimeType ([string]) : force the mimeType of the file, default extracted from filename
+: box ([string]) : the _id of the box . last box used by default
+: sender ([string]) : the _id of the device used as sender . default to first device registered
+
+Direct
+: payload.file (string) : path to the file
+: payload.mimeType ([string]) : force the mimeType of the file, default extracted from file
+: payload.box ([string]) : the _id of the box . last box used by default
+: payload.sender ([string]) : the _id of the device used as sender . default to first device registered
+
+### Outputs
+
+1. Standard output
+: payload.payload (object) : Object containing the response from lovebox API
+
+### Details
+
+The node allow you to send `jpg`, `png` or `gif` .
+About gif, the lovebox doesn't support big gif, on the app, gif use 3 frames gif, bigger gif can cause the lovebox to crash, doesn't notify the message, and fail to mark it as read
+
+</script>

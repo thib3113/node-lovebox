@@ -1,0 +1,15 @@
+import { LoveBoxNode } from '../lib/LoveBoxNode.js';
+import * as REDRegistry from '@node-red/registry';
+import { registerNode } from '../lib/registerNode.js';
+import { T@@PASCAL_NODE_NAMENode } from '../types/T@@PASCAL_NODE_NAMENode.js';
+import { T@@PASCAL_NODE_NAMENodeConfig } from '../types/T@@PASCAL_NODE_NAMENodeConfig.js';
+
+class @@PASCAL_NODE_NAMENode extends LoveBoxNode<T@@PASCAL_NODE_NAMENode, T@@PASCAL_NODE_NAMENodeConfig> {
+    protected async init(): Promise<void> {
+        await super.init();
+    }
+}
+
+module.exports = (RED: REDRegistry.NodeAPI) => {
+    registerNode(RED, '@@KEBAB_NODE_NAME', @@PASCAL_NODE_NAMENode);
+};

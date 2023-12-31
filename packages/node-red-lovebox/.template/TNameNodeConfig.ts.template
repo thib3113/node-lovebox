@@ -1,0 +1,3 @@
+import { TLoveBoxNodeConfig } from './TLoveBoxNodeConfig.js';
+
+export type T@@PASCAL_NODE_NAMENodeConfig = TLoveBoxNodeConfig;

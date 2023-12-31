@@ -1,0 +1,55 @@
+<script type="text/javascript">
+    RED.nodes.registerType('lovebox-list-boxes', {
+        category: 'lovebox',
+        defaults: {
+            name: {
+                value: 'List boxes',
+                required: false
+            },
+            LoveBoxAccountNodeId: {
+                value: '',
+                type: 'lovebox-account',
+                required: true
+            }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: 'lovebox.svg',
+        color: '#8A64FF',
+        paletteLabel: 'List boxes',
+        label: function () {
+            return this.name || 'List boxes';
+        },
+        labelStyle: function () {
+            return this.name ? 'node_label_italic' : '';
+        }
+    });
+</script>
+
+<script data-template-name="lovebox-list-boxes" type="text/html">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name" />
+    </div>
+    <div class="form-row">
+        <label for="node-input-LoveBoxAccountNodeId"><i class="fa fa-globe"></i> Lovebox Account</label>
+        <select id="node-input-LoveBoxAccountNodeId">
+            <option value="">Choose...</option>
+        </select>
+    </div>
+</script>
+
+<script data-help-name="lovebox-list-boxes" type="text/markdown">
+Receive vban events
+
+### Outputs
+
+1. Standard output
+: payload (Array) : Array of
+: payload.sender (object) : Object containing sender informations
+
+### Options
+
+This node is used to receive VBAN events . Each events will produce one message
+Feel free to do something with it .
+</script>

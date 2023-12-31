@@ -1,0 +1,152 @@
+[
+    {
+        "id": "6f7bc047fadc13e7",
+        "type": "subflow",
+        "name": "Send image",
+        "info": "",
+        "category": "",
+        "in": [],
+        "out": [],
+        "env": [],
+        "meta": {},
+        "color": "#DDAA99"
+    },
+    {
+        "id": "abfe761db6382c44",
+        "type": "lovebox-send-picture",
+        "z": "6f7bc047fadc13e7",
+        "name": "Send picture",
+        "LoveBoxAccountNodeId": "f873286bc616b04a",
+        "x": 1030,
+        "y": 280,
+        "wires": [
+            [
+                "01f802a0adfd7ef4"
+            ]
+        ]
+    },
+    {
+        "id": "01f802a0adfd7ef4",
+        "type": "debug",
+        "z": "6f7bc047fadc13e7",
+        "name": "debug 6",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1220,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "55651cbe6304f0a4",
+        "type": "file in",
+        "z": "6f7bc047fadc13e7",
+        "name": "",
+        "filename": "my-file.png",
+        "filenameType": "str",
+        "format": "",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "allProps": false,
+        "x": 770,
+        "y": 280,
+        "wires": [
+            [
+                "abfe761db6382c44"
+            ]
+        ]
+    },
+    {
+        "id": "a53d7987d6286fee",
+        "type": "lovebox-list-boxes",
+        "z": "6f7bc047fadc13e7",
+        "name": "List boxes",
+        "LoveBoxAccountNodeId": "f873286bc616b04a",
+        "x": 120,
+        "y": 280,
+        "wires": [
+            [
+                "f88af3336a6bce24"
+            ]
+        ]
+    },
+    {
+        "id": "f88af3336a6bce24",
+        "type": "split",
+        "z": "6f7bc047fadc13e7",
+        "name": "",
+        "splt": "\\n",
+        "spltType": "str",
+        "arraySplt": 1,
+        "arraySpltType": "len",
+        "stream": false,
+        "addname": "",
+        "x": 370,
+        "y": 280,
+        "wires": [
+            [
+                "d6fe76c5ef7fb0ef"
+            ]
+        ]
+    },
+    {
+        "id": "d6fe76c5ef7fb0ef",
+        "type": "function",
+        "z": "6f7bc047fadc13e7",
+        "name": "function 5",
+        "func": "// if box doesn't support color / images, skip\nif(!msg.payload.hasColor) {\n    return null;\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 540,
+        "y": 280,
+        "wires": [
+            [
+                "55651cbe6304f0a4"
+            ]
+        ]
+    },
+    {
+        "id": "ad466ed9d25cc01a",
+        "type": "comment",
+        "z": "6f7bc047fadc13e7",
+        "name": "list boxes",
+        "info": "",
+        "x": 120,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "5f17b83635d59c83",
+        "type": "comment",
+        "z": "6f7bc047fadc13e7",
+        "name": "filter boxes supporting images",
+        "info": "",
+        "x": 440,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "78d1875aa452533f",
+        "type": "comment",
+        "z": "6f7bc047fadc13e7",
+        "name": "send picture",
+        "info": "",
+        "x": 770,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "f873286bc616b04a",
+        "type": "lovebox-account",
+        "name": "My lovebox account"
+    }
+]

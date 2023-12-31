@@ -248,3 +248,5 @@ yarn-cache
 /cache
 /debug.json
 /statics
+
+lib

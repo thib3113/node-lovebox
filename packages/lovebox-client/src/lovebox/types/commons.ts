@@ -158,7 +158,7 @@ export interface Admin {
 
 export interface User {
     __typename?: 'User';
-    _id: mongoId;
+    _id?: mongoId;
     createdAt?: ISODate;
     firstName: string;
     email: string;
@@ -211,27 +211,27 @@ export enum MESSAGE_TYPES {
 }
 
 export interface Message {
-    _id: mongoId;
+    _id?: mongoId;
     channel?: string;
-    base64: base64Url;
-    bytes: OLEDPictureBytes;
-    content: string;
-    date: ISODate;
-    frames: Array<base64Url>;
-    gifId: string;
-    premium: boolean;
-    privacyPolicy: PRIVACY_POLICIES;
-    recipient: string;
-    senderUser: User;
-    status: MessageStatus | null;
+    base64?: base64Url;
+    bytes?: OLEDPictureBytes;
+    content?: string;
+    date?: ISODate;
+    frames?: Array<base64Url>;
+    gifId?: string;
+    premium?: boolean;
+    privacyPolicy?: PRIVACY_POLICIES;
+    recipient?: string;
+    senderUser?: User;
+    status?: MessageStatus | null;
     statusList?: Array<statuses>;
-    textOnly: boolean;
-    textCentered: boolean;
-    type: MESSAGE_TYPES;
-    url: string;
-    urlId: string;
-    addedLoveCoins: number;
-    __typename: 'Message';
+    textOnly?: boolean;
+    textCentered?: boolean;
+    type?: MESSAGE_TYPES;
+    url?: string;
+    urlId?: string;
+    addedLoveCoins?: number;
+    __typename?: 'Message';
     heartsSent?: boolean;
     commentsCount?: number;
 }

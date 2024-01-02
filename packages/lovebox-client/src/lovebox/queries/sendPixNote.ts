@@ -1,25 +1,11 @@
-import { ISODate } from '../types/index.js';
+import { Message } from '../types/index.js';
 import { gql } from 'graphql-request';
 import { GraphQLQuery } from '../../GraphQLQuery.js';
 
-export type LoveBoxApiSendPixNoteResponse = {
-    sendPixNote: {
-        _id: string;
-        type: 6;
-        recipient: string;
-        url: string;
-        date: ISODate;
-        status: {
-            label: 'send';
-            __typename: 'MessageStatus';
-        };
-        base64: null;
-        __typename: 'Message';
-    };
-};
-
 export const sendPixNote = new GraphQLQuery<
-    LoveBoxApiSendPixNoteResponse,
+    {
+        sendPixNote: Message;
+    },
     {
         base64: string | null;
         recipient: string;

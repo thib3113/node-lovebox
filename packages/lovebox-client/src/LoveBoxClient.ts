@@ -4,16 +4,8 @@ import { DEFAULT_OLED_BASE64, LOVEBOX_API_HOST, LOVEBOX_API_URL } from './consta
 import { LoveBoxApiLoginWithPasswordResponse } from './lovebox/types/responses.js';
 import { GraphQLClient, Variables } from 'graphql-request';
 import { BoxSettings, mongoId } from './lovebox/types/commons.js';
-import { getMe } from './lovebox/queries/getMe.js';
 import { GraphQLQuery } from './GraphQLQuery.js';
-import {
-    deleteMessage,
-    getMessages,
-    LoveBoxApiSendMessageResponse,
-    LoveBoxApiSendMessageV1Response,
-    sendMessage,
-    sendMessageV1
-} from './lovebox/queries/index.js';
+import { deleteMessage, getMessages, sendMessage, sendMessageV1, getMe } from './lovebox/queries/index.js';
 
 export type GraphQLClientRequestHeaders = Headers | Array<Array<string>> | Record<string, string>;
 
@@ -99,7 +91,7 @@ export class LoveBoxClient {
         return (await this.graphQlRequest(getMe, undefined)).me;
     }
 
-    public async listBoxes(): Promise<Array<BoxSettings>> {
+    public async listBoxes(): Promise<Array<BoxSettings> | undefined> {
         return (await this.getMe()).boxes;
     }
 
@@ -120,7 +112,7 @@ export class LoveBoxClient {
         frames?: Array<string>;
         boxId?: string;
         senderDeviceId?: string;
-    }): Promise<LoveBoxApiSendMessageResponse['sendMessage']> {
+    }): Promise<(typeof sendMessage.__response)['sendMessage']> {
         const { box, device } = await this.getDefaultBoxAndSender(boxId, senderDeviceId, true);
 
         return (
@@ -136,10 +128,12 @@ export class LoveBoxClient {
         ).sendMessage;
     }
 
-    public async deleteMessage(messageId: mongoId): Promise<unknown> {
-        return await this.graphQlRequest(deleteMessage, {
-            messageId
-        });
+    public async deleteMessage(messageId: mongoId): Promise<(typeof deleteMessage.__response)['deleteMessage']> {
+        return (
+            await this.graphQlRequest(deleteMessage, {
+                messageId
+            })
+        ).deleteMessage;
     }
 
     /**
@@ -168,7 +162,7 @@ export class LoveBoxClient {
 
         const me = await this.getMe();
 
-        const device = (deviceId = deviceId ?? me.device._id);
+        const device = deviceId ?? me.device?._id;
 
         if (!device) {
             throw new Error('fail to extract deviceId');
@@ -176,11 +170,11 @@ export class LoveBoxClient {
 
         const checkHasColorParams = (box: BoxSettings) => box.hasColor === (hasColor ? true : null);
 
-        if (boxId && hasColor !== undefined && !me.boxes.some((b) => b._id === boxId && checkHasColorParams(b))) {
+        if (boxId && hasColor !== undefined && !me?.boxes?.some((b) => b._id === boxId && checkHasColorParams(b))) {
             throw new Error(`boxId in parameters doesn't match hasColor needed : (${hasColor.toString()})`);
         }
 
-        const box = boxId ?? me.boxes.find(checkHasColorParams)?._id ?? '';
+        const box = boxId ?? me?.boxes?.find(checkHasColorParams)?._id ?? '';
 
         if (!box) {
             throw new Error('fail to extract boxId');
@@ -207,10 +201,10 @@ export class LoveBoxClient {
         bytes: Buffer;
         boxId?: string;
         senderDeviceId?: string;
-    }): Promise<LoveBoxApiSendMessageV1Response['sendMessageV1']> {
+    }): Promise<(typeof sendMessageV1.__response)['sendMessageV1']> {
         const { box, device } = await this.getDefaultBoxAndSender(boxId, senderDeviceId, false);
 
-        if (!Buffer.isBuffer(bytes) || bytes.byteLength !== 1024) {
+        if (bytes.length !== 1024 || bytes.some((b) => b > 255 || b < 0)) {
             throw new Error('Bytes buffer seems incorrect . need to contain 1024 bytes');
         }
 

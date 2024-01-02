@@ -690,47 +690,6 @@ const getLocalMessages = gql`
     }
 `;
 
-// const getMessages = gql`
-//     query getMessages($getMessagesInput: GetMessagesInput) {
-//         getMessages(getMessagesInput: $getMessagesInput) {
-//             _id
-//             channel
-//             content
-//             type
-//             recipient
-//             date
-//             status {
-//                 label
-//             }
-//             statusList {
-//                 label
-//                 date
-//             }
-//             drawing {
-//                 base64
-//                 rotate
-//             }
-//             base64
-//             bytes
-//             premium
-//             heartsSent
-//             isChannelMessage
-//             textOnly
-//             textCentered
-//             gifId
-//             url
-//             urlId
-//             frames
-//             senderUser {
-//                 _id
-//                 firstName
-//                 email
-//             }
-//             privacyPolicy
-//             commentsCount
-//         }
-//     }
-// `;
 const message = gql`
     query message($messageId: String!) {
         message(messageId: $messageId) {

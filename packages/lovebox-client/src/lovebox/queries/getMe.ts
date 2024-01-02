@@ -1,32 +1,13 @@
 import { User } from '../types/index.js';
 import { gql } from 'graphql-request';
 import { GraphQLQuery } from '../../GraphQLQuery.js';
-import { MakeRequired } from '../../utils.js';
 
-export type LoveBoxApiGetMeResponse = {
-    me: MakeRequired<
-        User,
-        | '_id'
-        | 'createdAt'
-        | 'firstName'
-        | 'email'
-        | 'beta'
-        | 'settings'
-        | 'addresses'
-        | 'boxes'
-        | 'roles'
-        | 'device'
-        | 'profile'
-        | 'reminder'
-        | 'subscription'
-        | 'fcmToken'
-        | 'language'
-        | 'loveCoins'
-        | 'lastSentMessage'
-    >;
-};
-
-export const getMe = new GraphQLQuery<LoveBoxApiGetMeResponse, undefined>(gql`
+export const getMe = new GraphQLQuery<
+    {
+        me: User;
+    },
+    undefined
+>(gql`
     query me {
         me {
             _id

@@ -2,12 +2,10 @@ import { GraphQLQuery } from '../../GraphQLQuery.js';
 import { gql } from 'graphql-request';
 import { Message, MESSAGE_TYPES, PRIVACY_POLICIES } from '../types/index.js';
 
-export type LoveBoxApiSendMessageResponse = {
-    sendMessage: Message & { type: MESSAGE_TYPES.COLOR_PICTURE };
-};
-
 export const sendMessage = new GraphQLQuery<
-    LoveBoxApiSendMessageResponse,
+    {
+        sendMessage: Message & { type: MESSAGE_TYPES.COLOR_PICTURE };
+    },
     {
         base64: string;
         recipient: string;

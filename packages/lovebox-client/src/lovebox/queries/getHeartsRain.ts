@@ -1,7 +1,7 @@
 import { gql } from 'graphql-request';
 import { GraphQLQuery } from '../../GraphQLQuery.js';
 
-export type LoveBoxApiGetHeartsRain = {
+export const getHeartsRain = new GraphQLQuery<{
     getHeartsRain: {
         _id: string;
         /**
@@ -9,9 +9,7 @@ export type LoveBoxApiGetHeartsRain = {
          */
         sender: string;
     } | null;
-};
-
-export const getHeartsRain = new GraphQLQuery<LoveBoxApiGetHeartsRain>(gql`
+}>(gql`
     query getHeartsRain {
         getHeartsRain {
             _id

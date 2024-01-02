@@ -2,12 +2,10 @@ import { GraphQLQuery } from '../../GraphQLQuery.js';
 import { gql } from 'graphql-request';
 import { Message } from '../types/index.js';
 
-export type LoveBoxApiGetMessagesResponse = {
-    getMessages: Array<Message>;
-};
-
 export const getMessages = new GraphQLQuery<
-    LoveBoxApiGetMessagesResponse,
+    {
+        getMessages: Array<Message>;
+    },
     {
         getMessagesInput?: { limit?: number; skip?: number };
     }

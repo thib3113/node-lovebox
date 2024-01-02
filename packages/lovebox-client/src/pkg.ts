@@ -1,1 +1,1 @@
-export const pkg = { name: 'lovebox-client', version: '0.9.3' };
+export const pkg = { name: 'lovebox-client', version: '0.9.4' };

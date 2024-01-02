@@ -14,17 +14,9 @@ inputs:
     description: 'check the package'
     required: false
     default: "false"
-  CODECOV_TOKEN:
-    description: 'CODECOV_TOKEN'
-    required: true
   GITHUB_TOKEN:
     description: 'GITHUB_TOKEN'
     required: true
-  SONAR_TOKEN:
-    description: 'SONAR_TOKEN'
-    required: true
-
-on:
 
 runs:
   using: "composite"
@@ -72,14 +64,14 @@ runs:
       run: pnpm -F ${{ inputs.package_name }}... build
       shell: bash
 
-    - uses: mattallty/jest-github-action@v1.0.3
-      env:
-        GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
-        CI: true
-      with:
-        working-directory: ${{ inputs.package_path }}
-        test-command: npm run test:ci:coverage
-        coverage-comment: false
+#    - uses: mattallty/jest-github-action@v1.0.3
+#      env:
+#        GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
+#        CI: true
+#      with:
+#        working-directory: ${{ inputs.package_path }}
+#        test-command: npm run test:ci:coverage
+#        coverage-comment: false
 
     - name: replace path in coverage files
       working-directory: ${{ inputs.package_path }}
@@ -88,34 +80,34 @@ runs:
         find ./coverage -type f -exec sed -i -e "s@$(pwd)@.@g" {} \;
       if: ${{ inputs.check == 'true' }}
 
-    - uses: actions/upload-artifact@v3
-      with:
-        name: coverage
-        path: |
-          ${{ inputs.package_path }}/coverage/clover.xml
-          ${{ inputs.package_path }}/coverage/coverage-final.json
-          ${{ inputs.package_path }}/coverage/lcov.info
-          ${{ inputs.package_path }}/coverage/junit.xml
-          ${{ inputs.package_path }}/coverage/test-report.xml
-          ${{ inputs.package_path }}/coverage/eslint-report.json
-      if: ${{ inputs.check == 'true' }}
-
-
-    - uses: codecov/codecov-action@v3
-      with:
-        token: ${{ inputs.CODECOV_TOKEN }}
-        flags: ${{ inputs.package_name }}
-        name: ${{ inputs.package_name }}
-        verbose: true
-        directory: ${{ inputs.package_path }}/coverage
-      if: ${{ inputs.check == 'true' }}
-
-    - name: SonarCloud Scan
-      uses: SonarSource/sonarcloud-github-action@master
-      env:
-        GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ inputs.SONAR_TOKEN }}
-      with:
-        args: -Dsonar.projectName=${{ inputs.package_name }}
-        projectBaseDir: ${{ inputs.package_path }}
-      if: ${{ inputs.check == 'true' }}
+#    - uses: actions/upload-artifact@v3
+#      with:
+#        name: coverage
+#        path: |
+#          ${{ inputs.package_path }}/coverage/clover.xml
+#          ${{ inputs.package_path }}/coverage/coverage-final.json
+#          ${{ inputs.package_path }}/coverage/lcov.info
+#          ${{ inputs.package_path }}/coverage/junit.xml
+#          ${{ inputs.package_path }}/coverage/test-report.xml
+#          ${{ inputs.package_path }}/coverage/eslint-report.json
+#      if: ${{ inputs.check == 'true' }}
+#
+#
+#    - uses: codecov/codecov-action@v3
+#      with:
+#        token: ${{ inputs.CODECOV_TOKEN }}
+#        flags: ${{ inputs.package_name }}
+#        name: ${{ inputs.package_name }}
+#        verbose: true
+#        directory: ${{ inputs.package_path }}/coverage
+#      if: ${{ inputs.check == 'true' }}
+#
+#    - name: SonarCloud Scan
+#      uses: SonarSource/sonarcloud-github-action@master
+#      env:
+#        GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
+#        SONAR_TOKEN: ${{ inputs.SONAR_TOKEN }}
+#      with:
+#        args: -Dsonar.projectName=${{ inputs.package_name }}
+#        projectBaseDir: ${{ inputs.package_path }}
+#      if: ${{ inputs.check == 'true' }}

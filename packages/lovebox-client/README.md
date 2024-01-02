@@ -70,7 +70,7 @@ This bytes will be divided in `64` rows per `128` columns,
 
 Each row is divided by 8 bits, 1 = light off / 0 = light on (common anode)
 
-you can use the editor [here]() to generate an example picture
+you can use the editor [here](https://thib3113.github.io/node-lovebox/tools/editor/) to generate an example picture
 
 
 ### Sending gif

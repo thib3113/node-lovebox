@@ -18,3 +18,8 @@ Allow to communicate with lovebox API (saved graphQL queries)
 [![platform](https://img.shields.io/badge/platform-Node--RED-red)](https://flows.nodered.org/node/@thib3113/node-red-lovebox)
 
 node-red plugin to use the lovebox api [here](https://flows.nodered.org/node/@thib3113/node-red-lovebox)
+
+## Tools
+
+### [LoveBox OLED Picture editor](https://thib3113.github.io/node-lovebox/tools/editor/)
+you can use the editor to generate LoveBox N&B OLED pictures

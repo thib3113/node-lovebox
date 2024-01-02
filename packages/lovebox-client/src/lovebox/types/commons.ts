@@ -3,7 +3,9 @@ export type pairingCode = `${string}-${string}`;
 export type UUID = `${string}-${string}-${string}-${string}`;
 export type email = `${string}@${string}`;
 export type ISODate = string;
-export type mongoId = string & { length: 24 };
+export type mongoId = string;
+export type base64Url = `data:${string};base64,${string}`;
+export type OLEDPictureBytes = Uint8Array;
 
 export enum PRIVACY_POLICIES {
     ONLY_ME = 'ONLY_ME',
@@ -12,9 +14,12 @@ export enum PRIVACY_POLICIES {
 
 export interface BoxSettings {
     __typename?: 'BoxSettings';
+    /**
+     * some id seems to be mongoId, other more nanoid ?
+     */
     _id: string;
     color: string;
-    companyId: string;
+    companyId?: string;
     signature: string;
     picture: string | null;
     nickname: string;
@@ -91,14 +96,6 @@ export interface DateClass {
 
 // ----
 
-export interface Message {
-    data: Data;
-}
-
-export interface Data {
-    getMessages: GetMessage[];
-}
-
 export interface GetMessage {
     _id: string;
     channel: null | string;
@@ -148,25 +145,6 @@ export interface NewMessageStatus {
 }
 
 export type statuses = MessageStatus | NewMessageStatus;
-
-export interface Message {
-    _id: string;
-    channel: string;
-    type: number;
-    recipient: string;
-    url: string;
-    date: ISODate;
-    status: MessageStatus | null;
-    statusList: Array<statuses>;
-    senderUser: SenderUser;
-    privacyPolicy: string;
-    addedLoveCoins: number;
-    base64: null;
-    heartsSent: boolean;
-    commentsCount: number;
-    __typename: string;
-}
-
 // -- _typename
 
 export interface Admin {
@@ -221,4 +199,36 @@ export interface ReminderDate {
     number: {} | unknown;
     weekday: {} | unknown;
     time: Time;
+}
+
+// types names are not known, only an idea
+export enum MESSAGE_TYPES {
+    COLOR_PICTURE = 6,
+    OLED = 7
+}
+
+export interface Message {
+    _id: mongoId;
+    channel?: string;
+    base64: base64Url;
+    bytes: OLEDPictureBytes;
+    content: string;
+    date: ISODate;
+    frames: Array<base64Url>;
+    gifId: string;
+    premium: boolean;
+    privacyPolicy: PRIVACY_POLICIES;
+    recipient: string;
+    senderUser: User;
+    status: MessageStatus | null;
+    statusList?: Array<statuses>;
+    textOnly: boolean;
+    textCentered: boolean;
+    type: MESSAGE_TYPES;
+    url: string;
+    urlId: string;
+    addedLoveCoins: number;
+    __typename: 'Message';
+    heartsSent?: boolean;
+    commentsCount?: number;
 }

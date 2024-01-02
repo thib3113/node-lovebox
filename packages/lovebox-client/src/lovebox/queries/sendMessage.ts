@@ -1,21 +1,9 @@
 import { GraphQLQuery } from '../../GraphQLQuery.js';
 import { gql } from 'graphql-request';
-import { ISODate, PRIVACY_POLICIES } from '../types/index.js';
+import { Message, MESSAGE_TYPES, PRIVACY_POLICIES } from '../types/index.js';
 
 export type LoveBoxApiSendMessageResponse = {
-    sendMessage: {
-        _id: string;
-        type: 6;
-        recipient: string;
-        url: string;
-        date: ISODate;
-        status: {
-            label: 'send';
-            __typename: 'MessageStatus';
-        };
-        base64: null;
-        __typename: 'Message';
-    };
+    sendMessage: Message & { type: MESSAGE_TYPES.COLOR_PICTURE };
 };
 
 export const sendMessage = new GraphQLQuery<

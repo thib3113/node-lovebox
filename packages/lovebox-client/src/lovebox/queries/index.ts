@@ -1,4 +1,5 @@
 export * from './checkPairingCode.js';
+export * from './deleteMessage.js';
 export * from './getHeartsRain.js';
 export * from './getMe.js';
 export * from './getMessages.js';

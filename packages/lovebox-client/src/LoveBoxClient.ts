@@ -1,13 +1,19 @@
 import { createDebugger } from './utils.js';
 import axios from 'axios';
-import { LOVEBOX_API_HOST, LOVEBOX_API_URL } from './constants.js';
+import { DEFAULT_OLED_BASE64, LOVEBOX_API_HOST, LOVEBOX_API_URL } from './constants.js';
 import { LoveBoxApiLoginWithPasswordResponse } from './lovebox/types/responses.js';
 import { GraphQLClient, Variables } from 'graphql-request';
-import { BoxSettings, PRIVACY_POLICIES } from './lovebox/types/commons.js';
+import { BoxSettings, mongoId } from './lovebox/types/commons.js';
 import { getMe } from './lovebox/queries/getMe.js';
-import { LoveBoxApiSendPixNoteResponse } from './lovebox/queries/sendPixNote.js';
 import { GraphQLQuery } from './GraphQLQuery.js';
-import { sendMessage } from './lovebox/queries/index.js';
+import {
+    deleteMessage,
+    getMessages,
+    LoveBoxApiSendMessageResponse,
+    LoveBoxApiSendMessageV1Response,
+    sendMessage,
+    sendMessageV1
+} from './lovebox/queries/index.js';
 
 export type GraphQLClientRequestHeaders = Headers | Array<Array<string>> | Record<string, string>;
 
@@ -114,34 +120,120 @@ export class LoveBoxClient {
         frames?: Array<string>;
         boxId?: string;
         senderDeviceId?: string;
-    }): Promise<LoveBoxApiSendPixNoteResponse['sendPixNote']> {
-        let deviceId = senderDeviceId || '';
-        let recipient = boxId || '';
-        if (!boxId || !senderDeviceId) {
-            const me = await this.getMe();
-
-            deviceId = senderDeviceId ?? me.device._id;
-            recipient = boxId ?? me.boxes.find((b) => b.hasColor)?._id ?? '';
-
-            if (!deviceId) {
-                throw new Error('fail to extract deviceId');
-            }
-
-            if (!recipient) {
-                throw new Error('fail to extract boxId');
-            }
-        }
+    }): Promise<LoveBoxApiSendMessageResponse['sendMessage']> {
+        const { box, device } = await this.getDefaultBoxAndSender(boxId, senderDeviceId, true);
 
         return (
             await this.graphQlRequest(sendMessage, {
                 base64: picture,
-                recipient,
+                recipient: box,
                 contentType: [],
                 options: {
                     framesBase64: frames ?? null,
-                    deviceId
+                    deviceId: device
                 }
             })
         ).sendMessage;
+    }
+
+    public async deleteMessage(messageId: mongoId): Promise<unknown> {
+        return await this.graphQlRequest(deleteMessage, {
+            messageId
+        });
+    }
+
+    /**
+     * This function will not check the hasColor if it can skip API call
+     * you need to check it before
+     *
+     * @param deviceId
+     * @param boxId
+     * @param hasColor
+     * @private
+     */
+    private async getDefaultBoxAndSender(
+        deviceId?: string,
+        boxId?: string,
+        hasColor?: boolean
+    ): Promise<{
+        box: string;
+        device: string;
+    }> {
+        if (boxId && deviceId) {
+            return {
+                box: boxId,
+                device: deviceId
+            };
+        }
+
+        const me = await this.getMe();
+
+        const device = (deviceId = deviceId ?? me.device._id);
+
+        if (!device) {
+            throw new Error('fail to extract deviceId');
+        }
+
+        const checkHasColorParams = (box: BoxSettings) => box.hasColor === (hasColor ? true : null);
+
+        if (boxId && hasColor !== undefined && !me.boxes.some((b) => b._id === boxId && checkHasColorParams(b))) {
+            throw new Error(`boxId in parameters doesn't match hasColor needed : (${hasColor.toString()})`);
+        }
+
+        const box = boxId ?? me.boxes.find(checkHasColorParams)?._id ?? '';
+
+        if (!box) {
+            throw new Error('fail to extract boxId');
+        }
+
+        return {
+            device,
+            box
+        };
+    }
+
+    /**
+     * works only on Black and white loveBox
+     * @param bytes an array of 1024 bytes . Works with common anode => 0 light on / 1 light off . 64 rows by 128 columns, each row is subsidised by bits
+     * @param frames
+     * @param boxId
+     * @param senderDeviceId
+     */
+    public async sendOLEDPicture({
+        bytes,
+        boxId,
+        senderDeviceId
+    }: {
+        bytes: Buffer;
+        boxId?: string;
+        senderDeviceId?: string;
+    }): Promise<LoveBoxApiSendMessageV1Response['sendMessageV1']> {
+        const { box, device } = await this.getDefaultBoxAndSender(boxId, senderDeviceId, false);
+
+        if (!Buffer.isBuffer(bytes) || bytes.byteLength !== 1024) {
+            throw new Error('Bytes buffer seems incorrect . need to contain 1024 bytes');
+        }
+
+        return (
+            await this.graphQlRequest(sendMessageV1, {
+                base64: DEFAULT_OLED_BASE64,
+                bytes: [...bytes],
+                recipient: box,
+                options: {
+                    deviceId: device
+                }
+            })
+        ).sendMessageV1;
+    }
+
+    async getMessage(skip = 0, limit = 10) {
+        return (
+            await this.graphQlRequest(getMessages, {
+                getMessagesInput: {
+                    limit,
+                    skip
+                }
+            })
+        ).getMessages;
     }
 }

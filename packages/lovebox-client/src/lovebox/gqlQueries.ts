@@ -43,11 +43,7 @@ const addUserToBox = gql`
         }
     }
 `;
-const deleteMessage = gql`
-    mutation deleteMessage($messageId: String!) {
-        deleteMessage(messageId: $messageId)
-    }
-`;
+
 const disableHelper = gql`
     mutation disableHelper($helper: String!) {
         disableHelper(helper: $helper)

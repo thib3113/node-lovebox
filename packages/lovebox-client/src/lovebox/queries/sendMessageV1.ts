@@ -1,15 +1,26 @@
 import { GraphQLQuery } from '../../GraphQLQuery.js';
 import { gql } from 'graphql-request';
+import { Message, MESSAGE_TYPES } from '../types/index.js';
+
+export type LoveBoxApiSendMessageV1Response = {
+    sendMessageV1: Message & { type: MESSAGE_TYPES.OLED };
+};
 
 export const sendMessageV1 = new GraphQLQuery<
-    unknown,
+    LoveBoxApiSendMessageV1Response,
     {
-        base64: string | null;
+        base64: string;
+        bytes: Array<number>;
         recipient: string;
-        options: {
-            framesBase64?: Array<string> | null;
+        options?: {
+            pairingCode?: string;
+            formattedText?: string;
+            premium?: boolean;
+            textOnly?: boolean;
             deviceId: string;
+            textCentered?: boolean;
         };
+        timezone?: number;
     }
 >(gql`
     mutation sendMessageV1(
@@ -44,9 +55,11 @@ export const sendMessageV1 = new GraphQLQuery<
                 _id
                 firstName
                 email
+                __typename
             }
             status {
                 label
+                __typename
             }
             textOnly
             textCentered
@@ -54,6 +67,7 @@ export const sendMessageV1 = new GraphQLQuery<
             url
             urlId
             addedLoveCoins
+            __typename
         }
     }
 `);

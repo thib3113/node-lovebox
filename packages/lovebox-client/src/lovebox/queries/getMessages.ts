@@ -1,27 +1,15 @@
 import { GraphQLQuery } from '../../GraphQLQuery.js';
 import { gql } from 'graphql-request';
-import { ISODate } from '../types/index.js';
+import { Message } from '../types/index.js';
 
 export type LoveBoxApiGetMessagesResponse = {
-    getMessages: {
-        _id: string;
-        type: 6;
-        recipient: string;
-        url: string;
-        date: ISODate;
-        status: {
-            label: 'send';
-            __typename: 'MessageStatus';
-        };
-        base64: null;
-        __typename: 'Message';
-    };
+    getMessages: Array<Message>;
 };
 
 export const getMessages = new GraphQLQuery<
     LoveBoxApiGetMessagesResponse,
     {
-        getMessagesInput: { limit?: number; skip?: number };
+        getMessagesInput?: { limit?: number; skip?: number };
     }
 >(gql`
     query getMessages($getMessagesInput: GetMessagesInput) {

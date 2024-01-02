@@ -1,11 +1,12 @@
 import { pkg } from './pkg.js';
-import * as LoveBoxQueries from './lovebox/queries/index.js';
+import * as QUERIES from './lovebox/queries/index.js';
 
 export * from './lovebox/types/index.js';
 export * from './constants.js';
+export * from './utils.js';
 export * from './GraphQLQuery.js';
 export * from './LoveBoxClient.js';
 
-export const QUERIES = LoveBoxQueries;
+export { QUERIES };
 
 export const VERSION = pkg.version;

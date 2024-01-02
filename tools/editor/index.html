@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Drawing Canvas</title>
+
+        <script src="./dist/jquery.min.js"></script>
+        <script src="./dist/jquery-migrate.min.js"></script>
+
+        <link rel="stylesheet" href="./dist/font-awesome.min.css" />
+        <script src="dist/drawerJs.standalone.min.js"></script>
+        <link rel="stylesheet" href="./dist/drawerJs.min.css" />
+
+        <style>
+            .colorpicker-control {
+                display: none !important;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container" style="margin: 50px; padding: 0; position: relative">
+            <div id="canvas-editor"></div>
+        </div>
+
+        <div class="output-container" style="margin: 100px 50px; padding: 0; position: relative">
+            <button onclick="canvasToBytes();">Generate</button> <br />
+            <p>Preview</p>
+            <img id="preview" width="128" height="64" style="border: black 1px solid" />
+            <textarea style="width: 100%; height: 60px; margin-top: 10px" id="output-textarea" onclick="this.select();"></textarea>
+        </div>
+        <script>
+            var drawerPlugins = [
+                // Drawing tools
+                'Pencil',
+                'Eraser',
+                'Text',
+                'Line',
+                'ArrowOneSide',
+                'ArrowTwoSide',
+                'Triangle',
+                'Rectangle',
+                'Circle',
+                'Polygon',
+                // 'Image',
+                // 'BackgroundImage',
+                // 'ImageCrop',
+
+                // Drawing options
+                //'ColorHtml5',
+                // 'Color',
+                'ShapeBorder',
+                'BrushSize',
+                // 'Resize',
+                'ShapeContextMenu',
+                // 'MovableFloatingMode',
+                // 'CloseButton',
+                // 'MinimizeButton',
+                // 'FullscreenModeButton',
+                'ToggleVisibilityButton',
+                'OvercanvasPopup',
+                // 'OpenPopupButton',
+                'Zoom',
+                // 'OpacityOption',
+                'LineWidth',
+                'StrokeWidth',
+
+                'TextLineHeight',
+                'TextAlign',
+                'TextFontFamily',
+                'TextFontSize',
+                'TextFontWeight',
+                'TextFontStyle',
+                'TextDecoration'
+                // 'TextColor',
+                // 'TextBackgroundColor'
+            ];
+
+            var drawerPluginConfig = {
+                ShapeBorder: {
+                    color: 'rgba(0, 0, 0, 0)'
+                },
+                Pencil: {
+                    cursorUrl: 'pencil',
+                    brushSize: 10
+                },
+                Eraser: {
+                    brushSize: 5
+                },
+                Circle: {
+                    centeringMode: 'normal'
+                },
+                Rectangle: {
+                    centeringMode: 'normal'
+                },
+                Triangle: {
+                    centeringMode: 'normal'
+                },
+                Text: {
+                    fonts: {
+                        Georgia: 'Georgia, serif',
+                        Palatino: "'Palatino Linotype', 'Book Antiqua', Palatino, serif",
+                        'Times New Roman': "'Times New Roman', Times, serif",
+
+                        Arial: 'Arial, Helvetica, sans-serif',
+                        'Arial Black': "'Arial Black', Gadget, sans-serif",
+                        'Comic Sans MS': "'Comic Sans MS', cursive, sans-serif",
+                        Impact: 'Impact, Charcoal, sans-serif',
+                        'Lucida Grande': "'Lucida Sans Unicode', 'Lucida Grande', sans-serif",
+                        Tahoma: 'Tahoma, Geneva, sans-serif',
+                        'Trebuchet MS': "'Trebuchet MS', Helvetica, sans-serif",
+                        Verdana: 'Verdana, Geneva, sans-serif',
+
+                        'Courier New': "'Courier New', Courier, monospace",
+                        'Lucida Console': "'Lucida Console', Monaco, monospace"
+                    },
+                    defaultFont: 'Palatino',
+                    editIconMode: true,
+                    defaultValues: {
+                        fontSize: 72,
+                        lineHeight: 2,
+                        textFontWeight: 'bold'
+                    },
+                    predefined: {
+                        fontSize: [8, 12, 14, 16, 32, 40, 72],
+                        lineHeight: [1, 2, 3, 4, 6]
+                    }
+                },
+                ShapeContextMenu: {
+                    position: {
+                        touch: 'cursor',
+                        mouse: 'cursor'
+                    }
+                },
+                Zoom: {
+                    enabled: true,
+                    showZoomTooltip: true,
+                    useWheelEvents: true,
+                    zoomStep: 1.05,
+                    defaultZoom: 1,
+                    maxZoom: 32,
+                    minZoom: 1,
+                    smoothnessOfWheel: 0,
+                    enableMove: true,
+                    enableWhenNoActiveTool: true,
+                    enableButton: true
+                },
+                Image: {
+                    scaleDownLargeImage: true,
+                    maxImageSizeKb: 1024,
+                    cropIsActive: true
+                },
+                BackgroundImage: {
+                    scaleDownLargeImage: true,
+                    maxImageSizeKb: 1024, //1MB
+                    acceptedMIMETypes: ['image/jpeg', 'image/png', 'image/gif'],
+                    dynamicRepositionImage: true,
+                    dynamicRepositionImageThrottle: 100,
+                    cropIsActive: false
+                }
+            };
+
+            var canvas = new DrawerJs.Drawer(
+                null,
+                {
+                    debug: true,
+                    toolbarSize: 35,
+                    toolbarSizeTouch: 43,
+                    borderCss: false,
+                    tooltipCss: {
+                        color: 'white',
+                        background: 'black'
+                    },
+                    activeColor: 'black',
+                    canvasProperties: {
+                        selectionColor: 'rgba(255, 255, 255, 0.3)',
+                        selectionDashArray: [3, 8],
+                        selectionBorderColor: '#5f5f5f'
+                    },
+                    objectControls: {
+                        borderColor: 'rgba(102,153,255,0.75)',
+                        borderOpacityWhenMoving: 0.4,
+                        cornerColor: 'rgba(102,153,255,0.5)',
+                        cornerSize: 12,
+                        hasBorders: true
+                    },
+                    objectControlsTouch: {
+                        borderColor: 'rgba(102,153,255,0.75)',
+                        borderOpacityWhenMoving: 0.4,
+                        cornerColor: 'rgba(102,153,255,0.5)',
+                        cornerSize: 20,
+                        hasBorders: true
+                    },
+                    plugins: drawerPlugins,
+                    pluginsConfig: drawerPluginConfig,
+                    defaultActivePlugin: { name: 'Pencil', mode: 'onNew' },
+                    defaultImageUrl: 'drawer.png',
+                    transparentBackground: false,
+                    exitOnOutsideClick: false,
+                    toolbars: {
+                        drawingTools: {
+                            position: 'top',
+                            positionType: 'outside',
+                            compactType: 'scrollable',
+                            hidden: false,
+                            toggleVisibilityButton: false,
+                            fullscreenMode: {
+                                position: 'top',
+                                hidden: false,
+                                toggleVisibilityButton: false
+                            }
+                        },
+                        toolOptions: {
+                            position: 'bottom',
+                            positionType: 'outside',
+                            compactType: 'scrollable',
+                            hidden: false,
+                            toggleVisibilityButton: false,
+                            fullscreenMode: {
+                                position: 'bottom',
+                                compactType: 'popup',
+                                hidden: false,
+                                toggleVisibilityButton: false
+                            }
+                        },
+                        settings: {
+                            position: 'right',
+                            positionType: 'outside',
+                            compactType: 'scrollable',
+                            hidden: false,
+                            toggleVisibilityButton: false,
+                            fullscreenMode: {
+                                position: 'bottom',
+                                hidden: true,
+                                toggleVisibilityButton: true
+                            }
+                        }
+                    }
+                },
+                1280,
+                640
+            );
+
+            $(document).ready(function () {
+                $('#canvas-editor').append(canvas.getHtml());
+                canvas.onInsert();
+                canvas.api.startEditing();
+            });
+
+            window.canvasToBytes = async () => {
+                canvas.api.restoreDefaultZoom();
+                canvas.api.stopEditing();
+                const canvasDatas = canvas.api.drawer.getImageData();
+                canvas.api.startEditing();
+
+                if (!canvasDatas) {
+                    throw new Error('fail to get canvas');
+                }
+
+                const bytesPerPixel = 4;
+
+                const rawImage = new Image();
+
+                await new Promise((resolve, reject) => {
+                    rawImage.src = canvasDatas;
+                    const timeout = setTimeout(reject, 1500);
+                    rawImage.onload = () => {
+                        clearTimeout(timeout);
+                        resolve();
+                    };
+                });
+
+                // const loveBoxWidth = 128;
+                // const loveBoxHeight = 64;
+
+                const loveBoxWidth = 512;
+                const loveBoxHeight = 256;
+
+                const downSampleCanvas = document.createElement('canvas');
+                downSampleCanvas.width = loveBoxWidth;
+                downSampleCanvas.height = loveBoxHeight;
+                const downSampleCtx = downSampleCanvas.getContext('2d');
+                downSampleCtx.drawImage(rawImage, 0, 0, loveBoxWidth, loveBoxHeight);
+
+                document.getElementById('preview').src = downSampleCanvas.toDataURL();
+                const downSampledData = [
+                    ...downSampleCtx.getImageData(0, 0, downSampleCanvas.width, downSampleCanvas.height, {
+                        colorSpace: 'srgb'
+                    }).data
+                ];
+
+                const linePerBytes = 8;
+                const bytes = [];
+                for (let i = 0; i < loveBoxHeight; i += linePerBytes) {
+                    const line = downSampledData.splice(0, loveBoxWidth * linePerBytes * bytesPerPixel);
+                    for (let j = 0; j < loveBoxWidth; j++) {
+                        let byte = 255;
+                        for (let k = 0; k < linePerBytes; k++) {
+                            const index = j * bytesPerPixel + k * loveBoxWidth * bytesPerPixel;
+                            const bit = line[index + 3] > 127 ? 1 : 0;
+                            byte = byte - (bit << (linePerBytes - 1 - k));
+                        }
+                        bytes.push(byte);
+                    }
+                }
+
+                $('#output-textarea').val(JSON.stringify(bytes));
+            };
+            window.drawer = canvas;
+        </script>
+    </body>
+</html>

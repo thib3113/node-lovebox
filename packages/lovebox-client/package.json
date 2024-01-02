@@ -1,6 +1,6 @@
 {
   "name": "lovebox-client",
-  "version": "0.9.4",
+  "version": "1.0.0",
   "description": "A lovebox client that allow you to send lovebox messages",
   "main": "./lib/index.cjs",
   "module": "./lib/index.mjs",

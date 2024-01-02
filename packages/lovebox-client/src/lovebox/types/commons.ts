@@ -47,6 +47,9 @@ export interface NotificationSettings {
 
 export interface Device {
     __typename?: 'Device';
+    /**
+     * can be uuid or mongoId
+     */
     _id: string;
     appVersion: string;
     os: string;

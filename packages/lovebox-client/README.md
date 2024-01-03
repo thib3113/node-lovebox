@@ -47,7 +47,7 @@ if(boxWithColor) {
 }
 
 if(boxWithoutColor) {
-    // use sendOLEDPicture only on a N&B loveBox
+    // use sendOLEDPicture only on a B&W loveBox
 
     // an array of 1024 bytes, read more below
     const bytes = Buffer.from([255,255,255 ,'...'])

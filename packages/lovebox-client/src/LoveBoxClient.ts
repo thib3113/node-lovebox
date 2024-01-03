@@ -198,7 +198,7 @@ export class LoveBoxClient {
         boxId,
         senderDeviceId
     }: {
-        bytes: Buffer;
+        bytes: Array<number>;
         boxId?: string;
         senderDeviceId?: string;
     }): Promise<(typeof sendMessageV1.__response)['sendMessageV1']> {

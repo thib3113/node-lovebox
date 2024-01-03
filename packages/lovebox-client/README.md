@@ -63,16 +63,6 @@ if(boxWithoutColor) {
 
 ````
 
-### OLED picture
-
-When sending oled pictures, you need to pass an array of `1024` bytes .
-This bytes will be divided in `64` rows per `128` columns,
-
-Each row is divided by 8 bits, 1 = light off / 0 = light on (common anode)
-
-you can use the editor [here](https://thib3113.github.io/node-lovebox/tools/editor/) to generate an example picture
-
-
 ### Sending gif
 sending gif is very limited .
 original gif are 3 frames only .
@@ -91,3 +81,18 @@ await client.sendPicture({
         senderDeviceId: me.device._id
     }, boxWithColor, me.device._id);
 ````
+
+
+### OLED picture
+When sending OLED pictures, you need to pass an array of `1024` bytes .
+This bytes will be divided in `64` rows per `128` columns,
+
+Each row is divided by 8 bits, 1 = light off / 0 = light on (common anode)
+
+you can use the editor [here](https://thib3113.github.io/node-lovebox/tools/editor/) to generate an example picture
+
+
+### Sending gif to OLED
+
+to send gif to OLED, you need to add another frames in the bytes array, max 3 frames (3072 bytes)
+

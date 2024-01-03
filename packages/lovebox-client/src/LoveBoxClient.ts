@@ -1,6 +1,6 @@
 import { createDebugger } from './utils.js';
 import axios from 'axios';
-import { DEFAULT_OLED_BASE64, LOVEBOX_API_HOST, LOVEBOX_API_URL } from './constants.js';
+import { DEFAULT_OLED_BASE64, LOVEBOX_API_HOST, LOVEBOX_API_URL, OLED_PICTURE_BYTES, OLED_PICTURE_MAX_FRAME } from './constants.js';
 import { LoveBoxApiLoginWithPasswordResponse } from './lovebox/types/responses.js';
 import { GraphQLClient, Variables } from 'graphql-request';
 import { BoxSettings, mongoId } from './lovebox/types/commons.js';
@@ -188,7 +188,7 @@ export class LoveBoxClient {
 
     /**
      * works only on Black and white loveBox
-     * @param bytes an array of 1024 bytes . Works with common anode => 0 light on / 1 light off . 64 rows by 128 columns, each row is subsidised by bits
+     * @param bytes an array of a multiple of 1024 bytes . Works with common anode => 0 light on / 1 light off . 64 rows by 128 columns, each row is subsidised by bits . 1024 bytes per frames (max 3 frames)
      * @param frames
      * @param boxId
      * @param senderDeviceId
@@ -204,8 +204,9 @@ export class LoveBoxClient {
     }): Promise<(typeof sendMessageV1.__response)['sendMessageV1']> {
         const { box, device } = await this.getDefaultBoxAndSender(boxId, senderDeviceId, false);
 
-        if (bytes.length !== 1024 || bytes.some((b) => b > 255 || b < 0)) {
-            throw new Error('Bytes buffer seems incorrect . need to contain 1024 bytes');
+        const maxBytes = OLED_PICTURE_BYTES * OLED_PICTURE_MAX_FRAME;
+        if (bytes.length % OLED_PICTURE_BYTES !== 0 || bytes.length > maxBytes || bytes.some((b) => b > 255 || b < 0)) {
+            throw new Error(`Bytes buffer seems incorrect . need to contain a multiple of ${OLED_PICTURE_BYTES} bytes, max ${maxBytes}`);
         }
 
         return (
@@ -214,7 +215,8 @@ export class LoveBoxClient {
                 bytes: [...bytes],
                 recipient: box,
                 options: {
-                    deviceId: device
+                    deviceId: device,
+                    premium: bytes.length > OLED_PICTURE_BYTES
                 }
             })
         ).sendMessageV1;

@@ -15,7 +15,7 @@
     "jest": "node node_modules/jest/bin/jest.js",
     "test:ci": "npm run jest -- --ci",
     "test:ci:coverage": "npm run jest -- --ci --coverage",
-    "lint": "eslint -f unix \"src/**\"",
+    "lint": "eslint -f unix \"src/**/*.ts\"",
     "lint:fix": "npm lint -- --fix",
     "ci:eslint": "npm run lint -- -f json -o ./coverage/eslint-report.json"
   },

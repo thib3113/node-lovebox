@@ -54,12 +54,12 @@ jobs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v2
+      - uses: pnpm/action-setup@v4
         name: Install pnpm
         id: pnpm-install
         with:
           run_install: true
-          version: latest
+          version: 8
       - id: set-matrix
         run: |
           export MATRIX=$(pnpm -s m ls --depth -1 -F "./packages/**" --json | jq -c)
@@ -132,12 +132,12 @@ jobs:
 #        with:
 #          node-version: lts/*
 #
-#      - uses: pnpm/action-setup@v2
+#      - uses: pnpm/action-setup@v4
 #        name: Install pnpm
 #        id: pnpm-install
 #        with:
 #          run_install: true
-#          version: latest
+#          version: 8
 #
 #      - name: Get pnpm store directory
 #        id: pnpm-cache
